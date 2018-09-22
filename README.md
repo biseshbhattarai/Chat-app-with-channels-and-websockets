@@ -4,7 +4,7 @@
 
  Dependencies : 
 
-Python (Latest version is recommended)
-Django 2.0
-Channels
+Python (Latest version is recommended) ,
+Django 2.0 ,
+Channels ,
 Redis to create channels layers.
