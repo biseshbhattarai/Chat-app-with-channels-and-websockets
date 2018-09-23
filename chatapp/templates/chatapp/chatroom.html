@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.css">
 </head>
 <body>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
-    <input id="chat-message-input" type="text" size="100"/><br/>
-    <input id="chat-message-submit" type="button" value="Send"/>
+ <div id="app">
+    <textarea  id="chat-log" cols="100" rows="20">{{message}}</textarea><br/>
+    <input id="chat-message-input" v-model="message" type="text" size="100"/><br/>
+    <input id="chat-message-submit" v-on:click="onSubmit" type="button" value="Send"/>
+    </div>
 </body>
-<script>
+<!-- <script>
     var roomName = {{ room_name_json }};
 
     var chatSocket = new WebSocket(
@@ -43,6 +45,43 @@
         }));
 
         messageInputDom.value = '';
-    };
-</script>
-</html>
+    }; -->
+<!-- </script> -->
+ <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+<script>
+    new Vue({
+        el : "#app",
+        data : {
+            roomName : {{room_name_json}},
+            chatSocket : new WebSocket('ws://' + window.location.host + '/ws/chat/' + {{room_name_json}} + '/'),
+            message : '',
+        },
+        // 'ws://' + window.location.host +
+        // '/ws/chat/' + roomName + '/');
+       
+
+        methods : {
+            onSubmit() {
+                this.chatSocket.send(JSON.stringify({
+                    'message' : this.message,
+                }));
+                this.message = ''
+            },
+          
+        },
+        created () {
+            this.chatSocket.onmessage = (m) => {
+                let data = JSON.parse(m.data)
+                let message = data['message']
+                document.querySelector('#chat-log').value += (message + '\n');
+
+            },
+            this.chatSocket.onClose = (e) => {
+                console.error("Server didn't respond")
+            }
+    }
+})
+    
+    </script>
+    </html>
