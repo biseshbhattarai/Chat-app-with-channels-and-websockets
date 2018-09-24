@@ -4,18 +4,19 @@
 <head>
     <meta charset="utf-8"/>
     <title>Chat Room</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
 </head>
 <body>
  <div id="app">
-    <textarea  id="chat-log" cols="100" rows="20">{{message}}</textarea><br/>
-    <input id="chat-message-input" v-model="message" type="text" size="100"/><br/>
-    <input id="chat-message-submit" v-on:click="onSubmit" type="button" value="Send"/>
+                <textarea  id="chat-log" cols="100" rows="20">{{user}} : {{message}}</textarea><br/>
+                <input id="chat-message-input" v-model="message" type="text" size="100"/><br/>
+                <input id="chat-message-submit" v-on:click="onSubmit" type="button" value="Send"/>
+            
     </div>
 </body>
 
- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+
 <script>
     new Vue({
         el : "#app",
@@ -31,8 +32,10 @@
             onSubmit() {
                 this.chatSocket.send(JSON.stringify({
                     'message' : this.message,
+                    
                 }));
-                this.message = ''
+                this.message = '',
+                this.user = 'User 1'
             },
           
         },
@@ -43,6 +46,7 @@
                 document.querySelector('#chat-log').value += (message + '\n');
 
             },
+            // this.user = 'User 2'
             this.chatSocket.onClose = (e) => {
                 console.error("Server didn't respond")
             }
