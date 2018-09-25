@@ -9,8 +9,12 @@
 </head>
 <body>
  <div id="app">
-                <textarea  id="chat-log" cols="100" rows="20">{{user}} : {{message}}</textarea><br/>
+                
+                <textarea  id="chat-log" cols="100" rows="20"></textarea><br/>
+                
                 <input id="chat-message-input" v-model="message" type="text" size="100"/><br/>
+                <input id="chat-message-input" v-model="sender" type="text" size="100"/><br/>
+
                 <input id="chat-message-submit" v-on:click="onSubmit" type="button" value="Send"/>
             
     </div>
@@ -24,34 +28,39 @@
             roomName : {{room_name_json}},
             chatSocket : new WebSocket('ws://' + window.location.host + '/ws/chat/' + {{room_name_json}} + '/'),
             message : '',
-        },
+            sender : ''
        
        
-
+},
         methods : {
             onSubmit() {
                 this.chatSocket.send(JSON.stringify({
                     'message' : this.message,
+                    'sender' : this.sender
                     
                 }));
                 this.message = '',
-                this.user = 'User 1'
-            },
+                this.sender = this.sender
+                
+            }
           
         },
         created () {
             this.chatSocket.onmessage = (m) => {
                 let data = JSON.parse(m.data)
                 let message = data['message']
-                document.querySelector('#chat-log').value += (message + '\n');
-
+                let sender = data['sender']
+                console.log(this.sender)
+                document.querySelector('#chat-log').value += (sender + ':' +message + '\n');
+                
             },
             // this.user = 'User 2'
             this.chatSocket.onClose = (e) => {
                 console.error("Server didn't respond")
             }
-    }
-})
+        }
+    
+        })
     
     </script>
     </html>
